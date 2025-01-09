@@ -7,19 +7,61 @@ describe("KorapayClient", () => {
   let client: KorapayClient;
 
   beforeAll(async () => {
-    await load({ envPath: "../.env", export: true });
+    await load({ envPath: ".env", export: true });
     client = new KorapayClient();
   });
 
-  it("chargeViaCard", () => {});
+  it.skip("chargeViaCard", () => {});
+
+  it.skip("authorizeCardCharge", () => {});
+
+  it.skip("resendCardOtp", () => {});
+
+  it.skip("chargeViaBankTransfer", () => {});
+
+  it.skip("createVirtualBankAccount", () => {});
+
+  it.skip("getVirtualBankAccount", () => {});
+
+  it.skip("getVirtualBankAccountTransactions", () => {});
+
+  it.skip("creditSandboxVirtualBankAccount", () => {});
+
+  it.skip("chargeViaMobileMoney", () => {});
+
+  it.skip("authorizeMobileMoneyCharge", () => {});
+
+  it.skip("resendMobileMoneyOtp", () => {});
+
+  it.skip("resendSkt", () => {});
+
+  it.skip("authorizeSkt", () => {});
+
+  it.skip("initiateCharge", () => {});
+
+  it.skip("getCharge", () => {});
+
+  it.skip("resolveBankAccount", () => {});
+
+  it("getBalances", async () => {
+    const response = await client.getBalances();
+    console.log(response);
+  });
 
   it("getBanks", async () => {
     const response = await client.getBanks(Country.NIGERIA);
     console.log(response);
   });
 
-  it("KorapayClient.getBalances", async () => {
-    const response = await client.getBalances();
-    console.log(response);
+  it.skip("getMmo", async () => {
   });
+
+  it.skip("payoutToBankAccount", () => {});
+
+  it.skip("payoutToMobileMoney", () => {});
+
+  it.skip("bulkPayoutToBankAccount", () => {});
+  it.skip("getPayouts", () => {});
+  it.skip("getBulkTransaction", () => {});
+  it.skip("getPayoutTransaction", () => {});
 });
