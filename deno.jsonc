@@ -1,15 +1,19 @@
 {
   "name": "@gray-adeyi/korapay-sdk",
-  "version": "0.1.0",
+  "description": "A korapay client SDK for the javascript runtime.",
+  "version": "0.2.0",
+  "author": "Gbenga Adeyi <adeyigbenga005@gmail.com>",
   "exports": "./mod.ts",
+  "license": "MIT",
   "tasks": {
     "dev": "deno test --watch mod.ts"
   },
-  "license": "MIT",
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
-    "@std/crypto": "jsr:@std/crypto@^1.0.3",
-    "axios": "npm:axios@^1.7.7",
+    "@std/assert": "jsr:@std/assert@^1.0.10",
+    "@std/dotenv": "jsr:@std/dotenv@^0.225.3",
+    "@std/testing": "jsr:@std/testing@^1.0.8",
+    "axios": "npm:axios@^1.7.9",
     "lodash-es": "npm:lodash-es@^4.17.21"
   }
 }
