@@ -36,12 +36,11 @@ function toUint8Array(value: string) {
 
 async function importKey(encryptionKey: string) {
   const rawKey = toUint8Array(encryptionKey);
-  const cryptoKey = await crypto.subtle.importKey(
+  return await crypto.subtle.importKey(
     "raw",
     rawKey,
     { name: "AES-GCM" },
     false,
     ["encrypt"],
   );
-  return cryptoKey;
 }
