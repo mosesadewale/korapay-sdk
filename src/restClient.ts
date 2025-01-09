@@ -92,7 +92,7 @@ export default class RestClient {
 
   private get baseHeaders() {
     return {
-      "User-Agent": "@gray-adeyi/korapay-sdk 0.1.0",
+      "User-Agent": "@gray-adeyi/korapay-sdk 0.2.0",
       Accept: "application/json",
       "Content-Type": "application/json",
     };
