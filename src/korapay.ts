@@ -13,6 +13,28 @@ import type {
   PayoutToMobileMoneyPayload,
 } from "./types/global.ts";
 
+const SECRET_KEY_PREFIX = "sk_test_";
+
+const PACKAGE_DEV_MODE_MESSAGE = `
+💪🏽 "Korapay Integration powered by @gray-adeyi/korapay-sdk 0.2.0"🔥
+
+Need more guide on how to use this package?
+See api reference at https://jsr.io/@gray-adeyi/korapay-sdk/doc/~/KorapayClient
+
+Found a bug?
+Create an issue for it at https://github.com/gray-adeyi/korapay-sdk/issues
+
+If this project is useful to you or your company, please consider sponsoring the project by
+- 🧑🏻‍🤝‍🧑 Sharing it with your developer friends
+- ✨ Starring it on github at https://github.com/gray-adeyi/korapay-sdk
+- 💻 Contribute to it at https://github.com/gray-adeyi/korapay-sdk
+- ☕ Buy me a coffee at https://buymeacoffee.com/jigani 
+
+Note: This message only appears in dev mode. 
+Set "disablePackageDevModeMessage" flag to true on instantiation
+of KorapayClient to stop seeing this message.
+`;
+
 /**
  * A class for interfacing with Korapay API in your JS/TS project.
  */
@@ -34,19 +56,21 @@ export default class KorapayClient {
    * 'KORAPAY_SECRET_KEY' is set in your environmental variables.
    * @param encryptionKey - Your korapay integration key. Omit if
    * 'KORAPAY_ENCRYPTION_KEY' is set in your environmental variables.
-   * @param client A custom {@link RestClient} to use for making request to korapay.
+   * @param client - A custom {@link RestClient} to use for making request to korapay.
    */
   constructor(
     publicKey?: string,
     secretKey?: string,
     encryptionKey?: string,
     client?: RestClient,
+    disablePackageDevModeMessage = false,
   ) {
     if (client) {
       this.client = client;
     } else {
       this.client = new RestClient(publicKey, secretKey, encryptionKey);
     }
+    this.showPackageMessage(disablePackageDevModeMessage, secretKey);
   }
 
   /**
@@ -429,5 +453,20 @@ export default class KorapayClient {
       `/merchant/api/v1/transactions/${transactionReference}`,
       HTTPMethod.GET,
     );
+  }
+
+  private showPackageMessage(
+    disablePackageMessage: boolean,
+    secretKey?: string,
+  ) {
+    if (!this.isUsingTestSecretKey(secretKey) || disablePackageMessage) return;
+    console.log(PACKAGE_DEV_MODE_MESSAGE);
+  }
+
+  private isUsingTestSecretKey(secretKey?: string) {
+    if (secretKey) return secretKey.startsWith(SECRET_KEY_PREFIX);
+    return Deno.env.get(RestClient.ENV_SECRET_KEY_NAME)?.startsWith(
+      SECRET_KEY_PREFIX,
+    ) || false;
   }
 }
