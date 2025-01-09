@@ -4,7 +4,7 @@ import type {
   PaymentChannel,
 } from "../enums.ts";
 
-type Authorization = {
+export type Authorization = {
   readonly pin?: string;
   readonly otp?: string;
   readonly avs?: string;
