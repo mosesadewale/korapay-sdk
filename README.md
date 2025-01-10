@@ -4,7 +4,7 @@ A korapay client SDK for the javascript runtime.
 
 ## Features
 
-- Built in typescript
+- Typescript support
 - Implements methods matching all of korapay's public API.
 - Automatic case transformation of payload and response data keys for a more
   optimal JS/TS experience
@@ -76,7 +76,7 @@ more
 ## Limitations
 
 - Currently, @gray-adeyi/korapay-sdk does not perform any form of validation on
-  the data passed in as method parameters but sends them as is to paystack
+  the data passed in as method parameters but sends them as is to korapay's
   servers.
 - Limited documentation
 
