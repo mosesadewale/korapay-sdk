@@ -28,10 +28,10 @@ await build({
     },
     repository: {
       type: "git",
-      url: "git+https://github.com/gray-adeyi/paystack-sdk.git",
+      url: "git+https://github.com/gray-adeyi/korapay-sdk.git",
     },
     bugs: {
-      url: "https://github.com/gray-adeyi/paystack-sdk/issues",
+      url: "https://github.com/gray-adeyi/korapay-sdk/issues",
     },
   },
   postBuild() {
