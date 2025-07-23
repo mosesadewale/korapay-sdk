@@ -67,14 +67,14 @@ export default class RestClient {
     );
   }
 
-  // deno-lint-ignore no-explicit-any
   async call(
     endpoint: string,
     method: HTTPMethod,
     // deno-lint-ignore no-explicit-any
     data?: any,
     noAuth = false,
-  ): Promise<KorapayResponse> {
+  // deno-lint-ignore no-explicit-any
+  ): Promise<KorapayResponse<any>> {
     const handler = this.getMethodHandler(method, noAuth);
     let response: AxiosResponse;
     if ([HTTPMethod.GET, HTTPMethod.DELETE].includes(method)) {
@@ -134,7 +134,8 @@ export default class RestClient {
     return mapping[method];
   }
 
-  private deserializeResponse(response: AxiosResponse): KorapayResponse {
+  // deno-lint-ignore no-explicit-any
+  private deserializeResponse(response: AxiosResponse): KorapayResponse<any> {
     return {
       statusCode: response.status,
       status: response.data["status"] || false,
@@ -155,8 +156,9 @@ export default class RestClient {
     return response;
   }
 
-  // deno-lint-ignore no-explicit-any
-  static camelToSnakeCaseTransformer(data: any): any {
+  static camelToSnakeCaseTransformer(
+    data: Record<string, any>,
+  ): Record<string, any> {
     if (Array.isArray(data)) {
       return data.map(RestClient.camelToSnakeCaseTransformer);
     } else if (data !== null && typeof data === "object") {
@@ -170,8 +172,9 @@ export default class RestClient {
     return data;
   }
 
-  // deno-lint-ignore no-explicit-any
-  static snakeToCamelCaseTransformer(data: any): any {
+  static snakeToCamelCaseTransformer(
+    data: Record<string, any>,
+  ): Record<string, any> {
     if (Array.isArray(data)) {
       return data.map(RestClient.snakeToCamelCaseTransformer);
     } else if (data !== null && typeof data === "object") {
