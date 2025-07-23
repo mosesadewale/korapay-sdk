@@ -39,7 +39,35 @@ describe("KorapayClient", () => {
 
   it.skip("initiateCharge", () => {});
 
+  it.skip("chargeViaDirectBankDebit", () => {});
+
   it.skip("getCharge", () => {});
+
+  it.skip("getPayins", () => {});
+
+  it.skip("initiateRefund", () => {});
+
+  it.skip("getRefund", () => {});
+
+  it.skip("getRefundHistory", () => {});
+
+  it.skip("payoutToBankAccount", () => {});
+
+  it.skip("payoutToMobileMoney", () => {});
+
+  it.skip("remitToBankAccount", () => {});
+
+  it.skip("remitToMobileMoney", () => {});
+
+  it.skip("bulkPayoutToBankAccount", () => {});
+
+  it.skip("getPayoutsInBulkPayoutToBankAccount", () => {});
+
+  it.skip("getBulkPayoutToBankAccount", () => {});
+
+  it.skip("getPayoutTransaction", () => {});
+
+  it.skip("getPayouts", () => {});
 
   it.skip("resolveBankAccount", () => {});
 
@@ -48,6 +76,32 @@ describe("KorapayClient", () => {
     console.log(response);
   });
 
+  it.skip("getBalanceHistory", () => {});
+
+  it.skip("initiateRateConversion", () => {});
+
+  it.skip("completeRateConversion", () => {});
+
+  it.skip("getRateConversions", () => {});
+
+  it.skip("getRateConversion", () => {});
+
+  it.skip("createCard", () => {});
+
+  it.skip("getCard", () => {});
+
+  it.skip("getCards", () => {});
+
+  it.skip("fundCard", () => {});
+
+  it.skip("withdrawFromCard", () => {});
+
+  it.skip("updateCardStatus", () => {});
+
+  it.skip("createCardHolder", () => {});
+
+  it.skip("getCardTransactions", () => {});
+
   it("getBanks", async () => {
     const response = await client.getBanks(Country.NIGERIA);
     console.log(response);
@@ -55,13 +109,4 @@ describe("KorapayClient", () => {
 
   it.skip("getMmo", async () => {
   });
-
-  it.skip("payoutToBankAccount", () => {});
-
-  it.skip("payoutToMobileMoney", () => {});
-
-  it.skip("bulkPayoutToBankAccount", () => {});
-  it.skip("getPayouts", () => {});
-  it.skip("getBulkTransaction", () => {});
-  it.skip("getPayoutTransaction", () => {});
 });
