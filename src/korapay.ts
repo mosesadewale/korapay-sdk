@@ -1,17 +1,72 @@
+// deno-lint-ignore-file no-explicit-any
 import { type Country, type Currency, HTTPMethod } from "./enums.ts";
 import RestClient from "./restClient.ts";
 import type {
   AuthorizeCardChargePayload,
   BulkPayoutToBankAccountPayload,
+  Card,
   ChargeViaBankTransferPayload,
   ChargeViaCardPayload,
+  ChargeViaDirectBankDebit,
   ChargeViaMobileMoneyPayload,
+  CompleteRateConversionPayload,
+  CreateCardHolderPayload,
+  CreateCardPayload,
   CreateVirtualBankAccountPayload,
+  FundCardPayload,
+  GetBalanceHistoryQueryParams,
+  GetCardTransactionsQueryParams,
+  GetPayinsQueryParams,
+  GetPayoutsQueryParams,
+  GetRateConversionsQueryParams,
+  GetRefundHistoryQueryParams,
   InitiateChargePayload,
+  InitiateRateConversionPayload,
+  InitiateRefundPayload,
   KorapayResponse,
   PayoutToBankAccountPayload,
   PayoutToMobileMoneyPayload,
+  RemitToBankAccountPayload,
+  RemitToMobileMoneyPayload,
+  UpdateCardStatusPayload,
+  WithdrawFromCardPayload,
 } from "./types/global.ts";
+import {
+  Balance,
+  Bank,
+  BankAccount,
+  BankCharge,
+  BulkPayout,
+  BulkPayoutTransaction,
+  CardFund,
+  CardHolder,
+  CardWithdrawal,
+  Charge,
+  ChargeViaBankTransferData,
+  CompleteCurrencyConversionData,
+  CreateCardData,
+  ExchangeRate,
+  GetBalanceHistoryData,
+  GetCardData,
+  GetCardsData,
+  GetCardTransactionsData,
+  GetPayinsData,
+  GetPayoutsData,
+  GetPayoutsInBulkPayoutToBankAccountData,
+  GetRateConversionsData,
+  GetRefundHistoryData,
+  GetVirtualBankAccountTransactionData,
+  InitiateChargeData,
+  InitiateCurrencyConversionData,
+  MMO,
+  MobileMoneyCharge,
+  Payout,
+  Refund,
+  RefundDetail,
+  ResendCardOtpData,
+  UnifiedCharge,
+  VirtualBankAccount,
+} from "./types/responseModels.ts";
 
 const SECRET_KEY_PREFIX = "sk_test_";
 
@@ -76,14 +131,13 @@ export default class KorapayClient {
   /**
    * Accept debit card payments.
    *
-   * @remarks No validation is done on the payload in the client, it is sent
-   * as it is.
-   *
-   * @param payload - {@link ChargeViaCardPayload} is the data that is sent to korapay.
+   * @param payload - {@link ChargeViaCardPayload} is the data sent to korapay.
    *
    * @returns A promise containing a {@link KorapayResponse}
    */
-  async chargeViaCard(payload: ChargeViaCardPayload): Promise<KorapayResponse> {
+  async chargeViaCard(
+    payload: ChargeViaCardPayload,
+  ): Promise<KorapayResponse<Charge>> {
     const chargeData = await this.client.encryptData(payload);
     return await this.client.call(
       "/merchant/api/v1/charges/card",
@@ -101,7 +155,7 @@ export default class KorapayClient {
    */
   authorizeCardCharge(
     payload: AuthorizeCardChargePayload,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<Charge>> {
     return this.client.call(
       "/merchant/api/v1/charges/card/authorize",
       HTTPMethod.POST,
@@ -116,7 +170,9 @@ export default class KorapayClient {
    * returned as a response by korapay when the charge was initiated.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  resendCardOtp(transactionReference: string): Promise<KorapayResponse> {
+  resendCardOtp(
+    transactionReference: string,
+  ): Promise<KorapayResponse<ResendCardOtpData>> {
     return this.client.call(
       "/merchant/api/v1/charges/card/resend-otp",
       HTTPMethod.POST,
@@ -133,7 +189,7 @@ export default class KorapayClient {
    */
   chargeViaBankTransfer(
     payload: ChargeViaBankTransferPayload,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<ChargeViaBankTransferData>> {
     return this.client.call(
       "/merchant/api/v1/charges/bank-transfer",
       HTTPMethod.POST,
@@ -150,7 +206,7 @@ export default class KorapayClient {
    */
   createVirtualBankAccount(
     payload: CreateVirtualBankAccountPayload,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<VirtualBankAccount>> {
     return this.client.call(
       "/merchant/api/v1/virtual-bank-account",
       HTTPMethod.POST,
@@ -164,7 +220,9 @@ export default class KorapayClient {
    * @param accountReference Your unique reference for the virtual bank account.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  getVirtualBankAccount(accountReference: string): Promise<KorapayResponse> {
+  getVirtualBankAccount(
+    accountReference: string,
+  ): Promise<KorapayResponse<VirtualBankAccount>> {
     return this.client.call(
       `/merchant/api/v1/virtual-bank-account/${accountReference}`,
       HTTPMethod.GET,
@@ -179,7 +237,7 @@ export default class KorapayClient {
    */
   getVirtualBankAccountTransactions(
     accountNumber: string,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<GetVirtualBankAccountTransactionData>> {
     return this.client.call(
       `/merchant/api/v1/virtual-bank-account/transactions?account_number=${accountNumber}`,
       HTTPMethod.GET,
@@ -200,7 +258,7 @@ export default class KorapayClient {
     accountNumber: string,
     amount: number,
     currency: Currency,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<null>> {
     return this.client.call(
       "/merchant/api/v1/virtual-bank-account/sandbox/credit",
       HTTPMethod.POST,
@@ -217,7 +275,7 @@ export default class KorapayClient {
    */
   chargeViaMobileMoney(
     payload: ChargeViaMobileMoneyPayload,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<MobileMoneyCharge>> {
     return this.client.call(
       "/merchant/api/v1/charges/mobile-money",
       HTTPMethod.POST,
@@ -235,7 +293,7 @@ export default class KorapayClient {
   authorizeMobileMoneyCharge(
     reference: string,
     token: string,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<MobileMoneyCharge>> {
     return this.client.call(
       "/merchant/api/v1/charges/mobile-money/authorize",
       HTTPMethod.POST,
@@ -249,7 +307,9 @@ export default class KorapayClient {
    * @param transactionReference The reference of the pending transaction.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  resendMobileMoneyOtp(transactionReference: string): Promise<KorapayResponse> {
+  resendMobileMoneyOtp(
+    transactionReference: string,
+  ): Promise<KorapayResponse<null>> {
     return this.client.call(
       "/merchant/api/v1/charges/mobile-money/resend-otp",
       HTTPMethod.POST,
@@ -263,7 +323,7 @@ export default class KorapayClient {
    * @param transactionReference The reference of the pending transaction.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  resendSkt(transactionReference: string): Promise<KorapayResponse> {
+  resendSkt(transactionReference: string): Promise<KorapayResponse<null>> {
     return this.client.call(
       "/merchant/api/v1/charges/mobile-money/resend-stk",
       HTTPMethod.POST,
@@ -278,7 +338,10 @@ export default class KorapayClient {
    * @param pin The simulated customer's pin
    * @returns A promise containing a {@link KorapayResponse}
    */
-  authorizeSkt(reference: string, pin: string): Promise<KorapayResponse> {
+  authorizeSkt(
+    reference: string,
+    pin: string,
+  ): Promise<KorapayResponse<MobileMoneyCharge>> {
     return this.client.call(
       "/merchant/api/v1/charges/mobile-money/sandbox/authorize-stk",
       HTTPMethod.POST,
@@ -293,9 +356,27 @@ export default class KorapayClient {
    * initiate a charge.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  initiateCharge(payload: InitiateChargePayload): Promise<KorapayResponse> {
+  initiateCharge(
+    payload: InitiateChargePayload,
+  ): Promise<KorapayResponse<InitiateChargeData>> {
     return this.client.call(
       "/merchant/api/v1/charges/initialize",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  /**
+   *  Initiate a Pay With Bank for direct debit collections for your customers.
+   *
+   * @param payload {@link ChargeViaDirectBankDebit} is the data sent to korapay
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  chargeViaDirectBankDebit(
+    payload: ChargeViaDirectBankDebit,
+  ): Promise<KorapayResponse<BankCharge>> {
+    return this.client.call(
+      "/merchant/api/v1/charge/pay-with-bank",
       HTTPMethod.POST,
       payload,
     );
@@ -307,9 +388,193 @@ export default class KorapayClient {
    * @param reference The reference of the charge.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  getCharge(reference: string): Promise<KorapayResponse> {
+  getCharge(reference: string): Promise<KorapayResponse<UnifiedCharge>> {
     return this.client.call(
       `/merchant/api/v1/charges/${reference}`,
+      HTTPMethod.GET,
+    );
+  }
+
+  /**
+   * Retrieve a history of payins made to your account
+   *
+   * @param queryParams {@link GetPayinsQueryParams} lets you filter the returned result
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  getPayins(
+    queryParams?: GetPayinsQueryParams,
+  ): Promise<KorapayResponse<GetPayinsData>> {
+    const endpoint = this.addQueryParams(
+      "/merchant/api/v1/pay-ins",
+      queryParams,
+    );
+    return this.client.call(
+      endpoint,
+      HTTPMethod.GET,
+    );
+  }
+
+  /**
+   *  Initiate a refund for a payment.
+   *
+   * @param payload {@link InitiateRefundPayload} is the data sent to korapay to initiate a refund
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  initiateRefund(
+    payload: InitiateRefundPayload,
+  ): Promise<KorapayResponse<Refund>> {
+    return this.client.call(
+      "/merchant/api/v1/refunds/initiate",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  getRefund(reference: string): Promise<KorapayResponse<RefundDetail>> {
+    return this.client.call(
+      `/merchant/api/v1/refunds/${reference}`,
+      HTTPMethod.GET,
+    );
+  }
+
+  getRefundHistory(
+    queryParams?: GetRefundHistoryQueryParams,
+  ): Promise<KorapayResponse<GetRefundHistoryData>> {
+    const endpoint = this.addQueryParams(
+      "/merchant/api/v1/refunds",
+      queryParams,
+    );
+    return this.client.call(
+      endpoint,
+      HTTPMethod.GET,
+    );
+  }
+
+  /**
+   * Initiate a single disbursement to a bank account.
+   *
+   * @param payload {@link PayoutToBankAccountPayload} is the data sent to korapay to
+   * initiate a payout to bank account
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  payoutToBankAccount(
+    payload: PayoutToBankAccountPayload,
+  ): Promise<KorapayResponse<Payout>> {
+    return this.client.call(
+      "/merchant/api/v1/transactions/disburse",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  /**
+   * Initiate a single disbursement to a mobile money account.
+   *
+   * @param payload {@link PayoutToMobileMoneyPayload} is the data sent to korapay
+   * to initiate a payout to mobile money
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  payoutToMobileMoney(
+    payload: PayoutToMobileMoneyPayload,
+  ): Promise<KorapayResponse<Payout>> {
+    return this.client.call(
+      "/merchant/api/v1/transactions/disburse",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  remitToBankAccount(
+    payload: RemitToBankAccountPayload,
+  ): Promise<KorapayResponse<Payout>> {
+    return this.client.call(
+      "/merchant/api/v1/transactions/disburse/remittance",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  remitToMobileMoney(
+    payload: RemitToMobileMoneyPayload,
+  ): Promise<KorapayResponse<Payout>> {
+    return this.client.call(
+      "/merchant/api/v1/transactions/disburse/remittance",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  /**
+   * Initiate a bulk payout to bank accounts.
+   *
+   * @param payload {@link BulkPayoutToBankAccountPayload} is the data sent to korapay
+   * to initiate a bulk payout to bank accounts
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  bulkPayoutToBankAccount(
+    payload: BulkPayoutToBankAccountPayload,
+  ): Promise<KorapayResponse<BulkPayout>> {
+    return this.client.call(
+      "/api/v1/transactions/disburse/bulk",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  /**
+   * Retrieve a bulk payout
+   *
+   * @param bulkReference - The reference of the bulk payout to retrieve.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  getPayoutsInBulkPayoutToBankAccount(
+    bulkReference: string,
+  ): Promise<KorapayResponse<GetPayoutsInBulkPayoutToBankAccountData>> {
+    return this.client.call(
+      `/api/v1/transactions/bulk/${bulkReference}/payout`,
+      HTTPMethod.GET,
+    );
+  }
+
+  /**
+   * Retrieve the transactions in a bulk payout.
+   *
+   * @param bulkReference - The reference of the bulk payout whose transactions you to retrieve.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
+  getBulkPayoutToBankAccount(
+    bulkReference: string,
+  ): Promise<KorapayResponse<BulkPayoutTransaction>> {
+    return this.client.call(
+      `/api/v1/transactions/bulk/${bulkReference}`,
+      HTTPMethod.GET,
+    );
+  }
+
+  /**
+   * Retrieve the status and details of a disbursement through the reference.
+   *
+   * @param transactionReference - The transaction reference of the payout.
+   * @returns
+   */
+  getPayoutTransaction(
+    transactionReference: string,
+  ): Promise<KorapayResponse<Payout>> {
+    return this.client.call(
+      `/merchant/api/v1/transactions/${transactionReference}`,
+      HTTPMethod.GET,
+    );
+  }
+
+  getPayouts(
+    queryParams?: GetPayoutsQueryParams,
+  ): Promise<KorapayResponse<GetPayoutsData>> {
+    const endpoint = this.addQueryParams(
+      "/merchant/api/v1/payouts",
+      queryParams,
+    );
+    return this.client.call(
+      endpoint,
       HTTPMethod.GET,
     );
   }
@@ -324,7 +589,7 @@ export default class KorapayClient {
   resolveBankAccount(
     bankCode: string,
     accountNumber: string,
-  ): Promise<KorapayResponse> {
+  ): Promise<KorapayResponse<BankAccount>> {
     return this.client.call(
       "/merchant/api/v1/misc/banks/resolve",
       HTTPMethod.POST,
@@ -336,8 +601,146 @@ export default class KorapayClient {
    *
    * @returns A promise containing a {@link KorapayResponse}
    */
-  getBalances(): Promise<KorapayResponse> {
+  getBalances(): Promise<KorapayResponse<Balance>> {
     return this.client.call("/merchant/api/v1/balances", HTTPMethod.GET);
+  }
+
+  getBalanceHistory(
+    queryParams?: GetBalanceHistoryQueryParams,
+  ): Promise<KorapayResponse<GetBalanceHistoryData>> {
+    const endpoint = this.addQueryParams(
+      "/merchant/api/v1/balances/history",
+      queryParams,
+    );
+    return this.client.call(
+      endpoint,
+      HTTPMethod.GET,
+    );
+  }
+
+  initiateRateConversion(
+    payload: InitiateRateConversionPayload,
+  ): Promise<KorapayResponse<InitiateCurrencyConversionData>> {
+    return this.client.call(
+      "/merchant/api/v1/conversions/rates",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  completeRateConversion(
+    payload: CompleteRateConversionPayload,
+  ): Promise<KorapayResponse<CompleteCurrencyConversionData>> {
+    return this.client.call(
+      "/merchant/api/v1/conversions/",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  getRateConversions(
+    queryParams?: GetRateConversionsQueryParams,
+  ): Promise<KorapayResponse<GetRateConversionsData>> {
+    const endpoint = this.addQueryParams(
+      "/merchant/api/v1/conversions/",
+      queryParams,
+    );
+    return this.client.call(
+      endpoint,
+      HTTPMethod.GET,
+    );
+  }
+
+  getRateConversion(reference: string): Promise<KorapayResponse<ExchangeRate>> {
+    return this.client.call(
+      `/merchant/api/v1/conversions/${reference}`,
+      HTTPMethod.GET,
+    );
+  }
+
+  createCard(
+    payload: CreateCardPayload,
+  ): Promise<KorapayResponse<CreateCardData>> {
+    return this.client.call(
+      "/merchant/api/v1/cards",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  getCard(reference: string): Promise<KorapayResponse<GetCardData>> {
+    return this.client.call(
+      `/merchant/api/v1/cards/${reference}`,
+      HTTPMethod.GET,
+    );
+  }
+
+  getCards(): Promise<KorapayResponse<GetCardsData>> {
+    return this.client.call(
+      "/merchant/api/v1/cards",
+      HTTPMethod.GET,
+    );
+  }
+
+  fundCard(
+    reference: string,
+    payload: FundCardPayload,
+  ): Promise<KorapayResponse<CardFund>> {
+    return this.client.call(
+      `/merchant/api/v1/cards/${reference}/fund`,
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  withdrawFromCard(
+    reference: string,
+    payload: WithdrawFromCardPayload,
+  ): Promise<KorapayResponse<CardWithdrawal>> {
+    return this.client.call(
+      `/merchant/api/v1/cards/${reference}/withdraw`,
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  updateCardStatus(
+    reference: string,
+    payload: UpdateCardStatusPayload,
+  ): Promise<
+    KorapayResponse<{
+      readonly status: "active" | "suspended";
+    }>
+  > {
+    return this.client.call(
+      `/merchant/api/v1/cards/${reference}/status`,
+      HTTPMethod.PATCH,
+      payload,
+    );
+  }
+
+  createCardHolder(
+    payload: CreateCardHolderPayload,
+  ): Promise<KorapayResponse<CardHolder>> {
+    return this.client.call(
+      "/merchant/api/v1/cardholders",
+      HTTPMethod.POST,
+      payload,
+    );
+  }
+
+  getCardTransactions(
+    cardReference: string,
+    queryParams?: GetCardTransactionsQueryParams,
+  ): Promise<KorapayResponse<GetCardTransactionsData>> {
+    const endpoint = this.addQueryParams(
+      `/merchant/api/v1/cards/${cardReference}/transactions`,
+      queryParams,
+    );
+    return this.client.call(
+      endpoint,
+      HTTPMethod.GET,
+    );
   }
 
   /**
@@ -347,7 +750,7 @@ export default class KorapayClient {
    * E.g., `Country.NIGERIA`.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  getBanks(country: Country): Promise<KorapayResponse> {
+  getBanks(country: Country): Promise<KorapayResponse<Bank[]>> {
     return this.client.call(
       `/merchant/api/v1/misc/banks?countryCode=${country}`,
       HTTPMethod.GET,
@@ -362,97 +765,26 @@ export default class KorapayClient {
    * @param country An enum representing the country to retrieve the MMOs from. E.g., `Country.GHANA`.
    * @returns A promise containing a {@link KorapayResponse}
    */
-  getMmo(country: Country): Promise<KorapayResponse> {
+  getMmo(country: Country): Promise<KorapayResponse<MMO[]>> {
     return this.client.call(
       `/merchant/api/v1/misc/mobile-money?countryCode=${country}`,
       HTTPMethod.GET,
     );
   }
 
-  /**
-   * Initiate a single disbursement to a bank account.
-   *
-   * @param payload {@link PayoutToBankAccountPayload} is the data sent to korapay to
-   * initiate a payout to bank account
-   * @returns A promise containing a {@link KorapayResponse}
-   */
-  payoutToBankAccount(
-    payload: PayoutToBankAccountPayload,
-  ): Promise<KorapayResponse> {
-    return this.client.call(
-      "/merchant/api/v1/transactions/disburse",
-      HTTPMethod.POST,
-      payload,
+  private addQueryParams(
+    endpoint: string,
+    queryParams?: Record<string, any>,
+  ): string {
+    if (!queryParams) return endpoint;
+    const url = new URL(endpoint, "https://_");
+    const transformedQueryParams = RestClient.camelToSnakeCaseTransformer(
+      queryParams,
     );
-  }
-  /**
-   * Initiate a single disbursement to a mobile money account.
-   *
-   * @param payload {@link PayoutToMobileMoneyPayload} is the data sent to korapay
-   * to initiate a payout to mobile money
-   * @returns A promise containing a {@link KorapayResponse}
-   */
-  payoutToMobileMoney(
-    payload: PayoutToMobileMoneyPayload,
-  ): Promise<KorapayResponse> {
-    return this.client.call(
-      "/merchant/api/v1/transactions/disburse",
-      HTTPMethod.POST,
-      payload,
-    );
-  }
-  /**
-   * Initiate a bulk payout to bank accounts.
-   *
-   * @param payload {@link BulkPayoutToBankAccountPayload} is the data sent to korapay
-   * to initiate a bulk payout to bank accounts
-   * @returns A promise containing a {@link KorapayResponse}
-   */
-  bulkPayoutToBankAccount(
-    payload: BulkPayoutToBankAccountPayload,
-  ): Promise<KorapayResponse> {
-    return this.client.call(
-      "/api/v1/transactions/disburse/bulk",
-      HTTPMethod.POST,
-      payload,
-    );
-  }
-
-  /**
-   * Retrieve a bulk payout
-   *
-   * @param bulkReference - The reference of the bulk payout to retrieve.
-   * @returns A promise containing a {@link KorapayResponse}
-   */
-  getPayouts(bulkReference: string): Promise<KorapayResponse> {
-    return this.client.call(
-      `/api/v1/transactions/bulk/${bulkReference}/payout`,
-      HTTPMethod.GET,
-    );
-  }
-  /**
-   * Retrieve the transactions in a bulk payout.
-   *
-   * @param bulkReference - The reference of the bulk payout whose transactions you to retrieve.
-   * @returns A promise containing a {@link KorapayResponse}
-   */
-  getBulkTransaction(bulkReference: string): Promise<KorapayResponse> {
-    return this.client.call(
-      `/api/v1/transactions/bulk/${bulkReference}`,
-      HTTPMethod.GET,
-    );
-  }
-  /**
-   * Retrieve the status and details of a disbursement through the reference.
-   *
-   * @param transactionReference - The transaction reference of the payout.
-   * @returns
-   */
-  getPayoutTransaction(transactionReference: string): Promise<KorapayResponse> {
-    return this.client.call(
-      `/merchant/api/v1/transactions/${transactionReference}`,
-      HTTPMethod.GET,
-    );
+    for (let [key, value] of Object.entries(transformedQueryParams)) {
+      url.searchParams.append(key, value);
+    }
+    return url.pathname + url.search;
   }
 
   private showPackageMessage(
