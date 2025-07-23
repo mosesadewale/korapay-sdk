@@ -58,7 +58,7 @@ import {
 // variables.
 const client = new KorapayClient();
 
-const response: KorapayResponse = await client.getBalances()
+const response: KorapayResponse = await client.getBalances();
 
 const payload: ChargeViaBankTransferPayload = {
   reference: "qwerty",

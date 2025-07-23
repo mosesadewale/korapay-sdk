@@ -2,7 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/korapay-sdk.iml" filepath="$PROJECT_DIR$/.idea/korapay-sdk.iml" />
+      <module
+        fileurl="file://$PROJECT_DIR$/.idea/korapay-sdk.iml"
+        filepath="$PROJECT_DIR$/.idea/korapay-sdk.iml"
+      />
     </modules>
   </component>
 </project>

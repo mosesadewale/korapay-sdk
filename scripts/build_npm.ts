@@ -18,7 +18,15 @@ await build({
     description: "A korapay client SDK for the javascript runtime.",
     author: "Gbenga Adeyi <adeyigbenga005@gmail.com>",
     license: "MIT",
-    keywords: ["node","bun","deno","typescript","kora", "kora-hq", "korapay"],
+    keywords: [
+      "node",
+      "bun",
+      "deno",
+      "typescript",
+      "kora",
+      "kora-hq",
+      "korapay",
+    ],
     dependencies: {
       axios: "^1.7.9",
       "lodash-es": "^4.17.21",
