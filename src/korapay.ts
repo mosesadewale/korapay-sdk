@@ -430,13 +430,24 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   *  Retrieve a refund.
+   *
+   * @param reference The reference of the refund
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getRefund(reference: string): Promise<KorapayResponse<RefundDetail>> {
     return this.client.call(
       `/merchant/api/v1/refunds/${reference}`,
       HTTPMethod.GET,
     );
   }
-
+  /**
+   *  Retrieve the refund history on your integration.
+   *
+   * @param queryParams {@link GetRefundHistoryQueryParams} Lets you filter the refund history to be retrieved.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getRefundHistory(
     queryParams?: GetRefundHistoryQueryParams,
   ): Promise<KorapayResponse<GetRefundHistoryData>> {
@@ -484,6 +495,13 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Remit to a bank account.
+   *
+   * @param payload {@link RemitToBankAccountPayload} is the data sent to korapay
+   * to remit to recipient's bank account.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   remitToBankAccount(
     payload: RemitToBankAccountPayload,
   ): Promise<KorapayResponse<Payout>> {
@@ -494,6 +512,13 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Remit to mobile money.
+   *
+   * @param payload {@link RemitToMobileMoneyPayload} is the data sent to korapay
+   * to remit to recipient's mobile money.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   remitToMobileMoney(
     payload: RemitToMobileMoneyPayload,
   ): Promise<KorapayResponse<Payout>> {
@@ -555,7 +580,7 @@ export default class KorapayClient {
    * Retrieve the status and details of a disbursement through the reference.
    *
    * @param transactionReference - The transaction reference of the payout.
-   * @returns
+   * @returns A promise containing a {@link KorapayResponse}
    */
   getPayoutTransaction(
     transactionReference: string,
@@ -566,6 +591,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Retrieve payouts on your integration.
+   *
+   * @param queryParams - {@link GetPayoutsQueryParams} Lets you filter the payouts to be retrieved.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getPayouts(
     queryParams?: GetPayoutsQueryParams,
   ): Promise<KorapayResponse<GetPayoutsData>> {
@@ -605,6 +636,12 @@ export default class KorapayClient {
     return this.client.call("/merchant/api/v1/balances", HTTPMethod.GET);
   }
 
+  /**
+   * Retrieve the balance history of your integration.
+   *
+   * @param queryParams - {@link GetBalanceHistoryQueryParams} Lets you filter the payouts to be retrieved.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getBalanceHistory(
     queryParams?: GetBalanceHistoryQueryParams,
   ): Promise<KorapayResponse<GetBalanceHistoryData>> {
@@ -618,6 +655,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Initiate rate conversion.
+   *
+   * @param payload - {@link InitiateRateConversionPayload} The data sent to korapay to initiate rate conversion
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   initiateRateConversion(
     payload: InitiateRateConversionPayload,
   ): Promise<KorapayResponse<InitiateCurrencyConversionData>> {
@@ -628,6 +671,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Complete rate conversion.
+   *
+   * @param payload - {@link CompleteRateConversionPayload} The data sent to korapay to initiate rate conversion
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   completeRateConversion(
     payload: CompleteRateConversionPayload,
   ): Promise<KorapayResponse<CompleteCurrencyConversionData>> {
@@ -638,6 +687,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Retrieve rate conversions on your integration.
+   *
+   * @param queryParams - {@link GetRateConversionsQueryParams} Lets you filter the rate conversions to be retrieved
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getRateConversions(
     queryParams?: GetRateConversionsQueryParams,
   ): Promise<KorapayResponse<GetRateConversionsData>> {
@@ -651,6 +706,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Retrieve a single rate conversions on your integration by it's reference.
+   *
+   * @param reference - The reference of the rate conversion.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getRateConversion(reference: string): Promise<KorapayResponse<ExchangeRate>> {
     return this.client.call(
       `/merchant/api/v1/conversions/${reference}`,
@@ -658,6 +719,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Create a card.
+   *
+   * @param payload - {@link CreateCardPayload} The data sent to korapay to initiate rate conversion
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   createCard(
     payload: CreateCardPayload,
   ): Promise<KorapayResponse<CreateCardData>> {
@@ -668,6 +735,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Retrieve a card.
+   *
+   * @param reference -  The reference of the card
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getCard(reference: string): Promise<KorapayResponse<GetCardData>> {
     return this.client.call(
       `/merchant/api/v1/cards/${reference}`,
@@ -675,6 +748,11 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Retrieve a cards.
+   *
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getCards(): Promise<KorapayResponse<GetCardsData>> {
     return this.client.call(
       "/merchant/api/v1/cards",
@@ -682,6 +760,13 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Fund a card.
+   *
+   * @param reference -  The reference of the card to be funded
+   * @param payload - {@link FundCardPayload} The data sent to korapay to fund the card
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   fundCard(
     reference: string,
     payload: FundCardPayload,
@@ -693,6 +778,13 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Withdraw from a card.
+   *
+   * @param reference - The reference of the card to withdraw from.
+   * @param payload - {@link WithdrawFromCardPayload} The data sent to korapay to withdraw from the card.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   withdrawFromCard(
     reference: string,
     payload: WithdrawFromCardPayload,
@@ -704,6 +796,13 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Activate or suspend a card.
+   *
+   * @param reference - The reference of the card to activate or suspend.
+   * @param payload - {@link UpdateCardStatusPayload} The data sent to korapay.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   updateCardStatus(
     reference: string,
     payload: UpdateCardStatusPayload,
@@ -719,6 +818,12 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Create card holer.
+   *
+   * @param payload - {@link CreateCardHolderPayload} The data sent to korapay.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   createCardHolder(
     payload: CreateCardHolderPayload,
   ): Promise<KorapayResponse<CardHolder>> {
@@ -729,6 +834,13 @@ export default class KorapayClient {
     );
   }
 
+  /**
+   * Retrieve transactions made on a card.
+   *
+   * @param cardReference - The reference of the card whose transactions you want to retrieve.
+   * @param queryParams - {@link UpdateCardStatusPayload} The data sent to korapay.
+   * @returns A promise containing a {@link KorapayResponse}
+   */
   getCardTransactions(
     cardReference: string,
     queryParams?: GetCardTransactionsQueryParams,
