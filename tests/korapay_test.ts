@@ -1,4 +1,5 @@
 import { beforeAll, describe, it } from "@std/testing/bdd";
+import { assertEquals } from "@std/assert";
 import KorapayClient from "../src/korapay.ts";
 import { Country } from "../src/enums.ts";
 import { load } from "@std/dotenv";
@@ -11,7 +12,8 @@ describe("KorapayClient", () => {
     client = new KorapayClient();
   });
 
-  it.skip("chargeViaCard", () => {});
+  it.skip("chargeViaCard", () => {
+  });
 
   it.skip("authorizeCardCharge", () => {});
 
@@ -73,7 +75,8 @@ describe("KorapayClient", () => {
 
   it("getBalances", async () => {
     const response = await client.getBalances();
-    console.log(response);
+    assertEquals(response.statusCode, 200);
+    assertEquals(response.message, 'success')
   });
 
   it.skip("getBalanceHistory", () => {});
