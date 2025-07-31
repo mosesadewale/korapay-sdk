@@ -4,7 +4,6 @@ import RestClient from "./restClient.ts";
 import type {
   AuthorizeCardChargePayload,
   BulkPayoutToBankAccountPayload,
-  Card,
   ChargeViaBankTransferPayload,
   ChargeViaCardPayload,
   ChargeViaDirectBankDebit,
@@ -31,7 +30,7 @@ import type {
   UpdateCardStatusPayload,
   WithdrawFromCardPayload,
 } from "./types/global.ts";
-import {
+import type {
   Balance,
   Bank,
   BankAccount,
@@ -71,7 +70,7 @@ import {
 const SECRET_KEY_PREFIX = "sk_test_";
 
 const PACKAGE_DEV_MODE_MESSAGE = `
-💪🏽 "Korapay Integration powered by @gray-adeyi/korapay-sdk 0.2.1"🔥
+💪🏽 "Korapay Integration powered by @gray-adeyi/korapay-sdk 0.3.0"🔥
 
 Need more guide on how to use this package?
 See api reference at https://jsr.io/@gray-adeyi/korapay-sdk/doc/~/KorapayClient
