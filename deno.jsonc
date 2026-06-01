@@ -6,7 +6,9 @@
   "exports": "./mod.ts",
   "license": "MIT",
   "tasks": {
-    "dev": "deno test --watch mod.ts"
+    "dev": "deno test --watch mod.ts",
+    "test": "deno test tests/korapay_test.ts tests/restClient_test.ts",
+    "test:live": "KORAPAY_LIVE_TESTS=1 deno test --allow-env --allow-read=.env --allow-net=api.korapay.com tests/live/korapay_live.ts"
   },
   "imports": {
     "@deno/dnt": "jsr:@deno/dnt@^0.41.3",
