@@ -105,7 +105,7 @@ await client.chargeViaMobileMoney({
   reference: "ref_002",
   customer: { email: "johndoe@example.com" },
   amount: 5000,
-  mobileMoney: { number: 254700000000 },
+  mobileMoney: { number: "254700000000" },
   currency: Currency.KES,
   description: "Mobile money charge",
 });
