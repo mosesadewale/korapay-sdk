@@ -1,13 +1,13 @@
 # @gray-adeyi/korapay-sdk
 
-TypeScript SDK for the Korapay API.
+A korapay client SDK for the javascript runtime.
 
-## What It Does
+## Features
 
-- Wraps Korapay HTTP endpoints in a typed client.
-- Converts request payloads from camelCase to snake_case automatically.
-- Converts response payloads back to camelCase for JS/TS ergonomics.
-- Supports both secure and public requests through the same client instance.
+- Typescript support
+- Implements methods matching all of korapay's public API.
+- Automatic case transformation of payload and response data keys for a more
+  optimal JS/TS experience
 
 ## Installation
 
@@ -41,9 +41,9 @@ bun add @gray-adeyi/korapay-sdk
 deno add @gray-adeyi/korapay-sdk
 ```
 
-## Quick Start
+## Usage
 
-Set these environment variables before you instantiate the client:
+You may choose to set these environment variables before instantiating the client like:
 
 ```bash
 KORAPAY_PUBLIC_KEY=pk_test_...
@@ -65,8 +65,7 @@ const banks = await client.getBanks(Country.NIGERIA);
 console.log(banks.data);
 ```
 
-If you want to pass keys explicitly, the constructor accepts them in the same
-order:
+Passing the public key, secret key and encryption key directly to the client on instantiation overrides the environmental variables:
 
 ```ts
 const client = new KorapayClient(
@@ -111,25 +110,24 @@ await client.chargeViaMobileMoney({
 });
 ```
 
-### Public endpoints
 
-Use `getBanks()` and `getMmo()` for public lookup data. These requests use the
-public key.
+## Limitations
 
-## Behavior Notes
+- Currently, @gray-adeyi/korapay-sdk does not perform any form of validation on
+  the data passed in as method parameters are used to call Korapay's endpoints as it, and the methods may throw exceptions depending on how the
+  underlying endpoint handles it
+- Limited documentation
 
-- The SDK does not validate request payloads before sending them to Korapay.
-- Environment variables are used by default when values are not passed to the
-  constructor.
-- Response keys are normalized to camelCase where possible.
+## Sponsorship
 
-## Documentation
+Every little donation goes a long way. You can also give this project a star in
+its Github repository it helps ♥️
 
-See the docs site for setup and API guidance:
-
-- [Getting started](https://gray-adeyi.github.io/korapay-sdk)
-- [Project documentation](https://gray-adeyi.github.io/korapay-sdk)
+- [Star on Github](https://www.github.com/gray-adeyi/korapay-sdk)
+- [Buy me a coffee](https://www.buymeacoffee.com/jigani)
 
 ## Contributing
 
-If you find a bug or want to propose an improvement, open an issue or submit a pull request.
+You might encounter bugs while using this project or have feature enhancements
+you'd like to share with the project. Create an issue on the project's
+[github](https://www.github.com/gray-adeyi/korapay-sdk) page.
