@@ -17,5 +17,8 @@
     "@std/testing": "jsr:@std/testing@^1.0.8",
     "axios": "npm:axios@^1.7.9",
     "lodash-es": "npm:lodash-es@^4.17.21"
+  },
+  "fmt": {
+    "exclude": ["**/*.md"]
   }
 }
