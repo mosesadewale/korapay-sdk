@@ -154,7 +154,7 @@ export type ChargeViaBankTransferPayload = {
    * it is set to `False`, the customer will bear the fee.
    * By default, it is `False`.
    */
-  merchantBearsCost?: string;
+  merchantBearsCost?: boolean;
   /**
    * An object with a maximum of 5 fields/keys for storing
    * additional information. Empty dictionaries are not allowed.
@@ -245,9 +245,9 @@ export type ChargeViaMobileMoneyPayload = {
    */
   mobileMoney: {
     /**
-     * The mobile number of the customer to be charged e.g., 254700000000.
+     * The mobile number of the customer to be charged e.g., `254700000000`.
      */
-    number: number;
+    number: string;
   };
   /**
    * An enum representing the currency the payment should be made in e.g., `Currency.KES`.

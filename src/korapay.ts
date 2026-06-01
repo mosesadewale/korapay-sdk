@@ -546,7 +546,7 @@ export default class KorapayClient {
   }
 
   /**
-   * Retrieve a bulk payout
+   * Retrieve payouts in a bulk payout.
    *
    * @param bulkReference - The reference of the bulk payout to retrieve.
    * @returns A promise containing a {@link KorapayResponse}
@@ -555,7 +555,7 @@ export default class KorapayClient {
     bulkReference: string,
   ): Promise<KorapayResponse<GetPayoutsInBulkPayoutToBankAccountData>> {
     return this.client.call(
-      `/api/v1/transactions/bulk/${bulkReference}/payout`,
+      `/api/v1/transactions/bulk/${bulkReference}/payouts`,
       HTTPMethod.GET,
     );
   }
@@ -880,6 +880,8 @@ export default class KorapayClient {
     return this.client.call(
       `/merchant/api/v1/misc/mobile-money?countryCode=${country}`,
       HTTPMethod.GET,
+      undefined,
+      true,
     );
   }
 
